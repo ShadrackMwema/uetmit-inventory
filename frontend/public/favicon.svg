@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Clipboard background -->
+  <rect x="20" y="15" width="60" height="75" rx="3" fill="#fff8dc" stroke="#ff6347" stroke-width="3"/>
+  
+  <!-- Clipboard top -->
+  <rect x="35" y="5" width="30" height="15" rx="3" fill="#ff6347" stroke="#ff6347" stroke-width="2"/>
+  
+  <!-- Checklist lines -->
+  <line x1="30" y1="35" x2="70" y2="35" stroke="#ff6347" stroke-width="2"/>
+  <line x1="30" y1="50" x2="70" y2="50" stroke="#ff6347" stroke-width="2"/>
+  <line x1="30" y1="65" x2="70" y2="65" stroke="#ff6347" stroke-width="2"/>
+  
+  <!-- Checkmarks -->
+  <path d="M33 30 L37 34 L43 26" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 45 L37 49 L43 41" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="35" cy="65" r="3" fill="#ff9800"/>
+</svg>
