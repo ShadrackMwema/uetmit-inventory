@@ -14,7 +14,7 @@ const InstrumentList = () => {
     const fetchInstruments = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/instruments');
+            const response = await axios.get('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments');
             setInstruments(response.data);
             setLoading(false);
         } catch (error) {
