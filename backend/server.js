@@ -84,23 +84,21 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Server error', message: err.message });
 });
 
-// Start the server regardless of environment
-const server = app.listen(PORT, () => {
-  console.log(`Server is definitely running on http://localhost:${PORT}`);
-  console.log(`Try accessing http://localhost:${PORT}/api/test in your browser`);
-});
+// For local development, start the server
+if (process.env.NODE_ENV !== 'production') {
+  const server = app.listen(PORT, () => {
+    console.log(`Server is definitely running on http://localhost:${PORT}`);
+    console.log(`Try accessing http://localhost:${PORT}/api/test in your browser`);
+  });
 
-// Handle server errors
-server.on('error', (error) => {
-  console.error('Server error:', error);
-  if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Try a different port.`);
-  }
-});
-
-// Only export the app in production for Vercel
-if (process.env.NODE_ENV === 'production') {
-  module.exports = app;
-} else {
-  // In development, we've already started the server
+  // Handle server errors
+  server.on('error', (error) => {
+    console.error('Server error:', error);
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Try a different port.`);
+    }
+  });
 }
+
+// Export the Express API for Vercel
+module.exports = app;
