@@ -7,20 +7,41 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// CORS Configuration - Updated to be more permissive with proper headers
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://uet-mit-instruments-checklist.vercel.app', 
-       'https://uet-mit-instruments-checklist-frontend.vercel.app',
-       'https://frontend-git-main-shadracks-projects-a6bc7ac0.vercel.app'] 
-    : true, // Allow any origin in development
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://uet-mit-instruments-checklist.vercel.app',
+      'https://uet-mit-instruments-checklist-frontend.vercel.app',
+      'https://frontend-git-main-shadracks-projects-a6bc7ac0.vercel.app',
+      'https://uetmit-inventory.vercel.app/',
+      // Local development origins
+      'http://localhost:3000',
+      undefined  // Allow requests with no origin (like mobile apps, curl, postman)
+    ];
+    
+    // Check if origin is allowed or if it's undefined (non-browser requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, false);
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  maxAge: 86400 // OPTION results are cached for 24 hours
 }));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-const MONGODB_URI = process.env.DATABASE_URL || 'mongodb://localhost:27017/instruments_checklist';
+const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://shad:Qwerty.2025@cluster0.numgyjb.mongodb.net/instruments_checklist?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
