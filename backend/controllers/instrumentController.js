@@ -4,20 +4,40 @@ const ChecklistHistory = require('../models/ChecklistHistory');
 // Get all instruments
 exports.getAllInstruments = async (req, res) => {
     try {
-        // Add pagination
+        // Add pagination with more options
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 100;
+        const limit = parseInt(req.query.limit) || 50; // Reduced default limit
         const skip = (page - 1) * limit;
         
+        // Get count with a separate lightweight query first
+        const totalCount = await Instrument.countDocuments().maxTimeMS(5000);
+        
         // Add sort and timeout for better performance
-        const instruments = await Instrument.find({})
+        const instruments = await Instrument.find({}, {
+            // Select only needed fields to reduce payload size
+            name: 1,
+            type: 1, 
+            quantity: 1,
+            condition: 1,
+            inPossession: 1,
+            dateAdded: 1
+        })
             .sort({ name: 1 })
             .limit(limit)
             .skip(skip)
-            .lean()
+            .lean() // Convert to plain JS objects
             .maxTimeMS(10000); // 10 second timeout
         
-        res.status(200).json(instruments);
+        // Send pagination info with the response
+        res.status(200).json({
+            instruments,
+            pagination: {
+                total: totalCount,
+                page,
+                limit,
+                pages: Math.ceil(totalCount / limit)
+            }
+        });
     } catch (error) {
         console.error('Error fetching instruments:', error);
         if (error.name === 'MongooseError' || error.name === 'MongoTimeoutError') {

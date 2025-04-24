@@ -47,13 +47,22 @@ const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://shad:Qwerty.2025@
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 20000, // Increased timeout
+    // Optimized connection settings
+    serverSelectionTimeoutMS: 30000, // Increased from default
+    socketTimeoutMS: 45000, // Increased from default
+    // Add retry settings
     connectTimeoutMS: 30000,
-    socketTimeoutMS: 45000
+    retryWrites: true
 })
-.then(() => {
+.then(async () => {
     console.log('MongoDB connected');
-    createIndexes().catch(err => console.error('Error creating indexes:', err));
+    try {
+        // Create indexes after connection is established
+        await createIndexes();
+        console.log('MongoDB indexes setup complete');
+    } catch (err) {
+        console.error('Error during index creation:', err);
+    }
 })
 .catch(err => console.error('MongoDB connection error:', err));
 
