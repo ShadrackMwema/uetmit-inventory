@@ -10,8 +10,10 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://uet-mit-instruments-checklist.vercel.app', 'https://uet-mit-instruments-checklist-frontend.vercel.app'] 
-    : ['http://localhost:3000'],
+    ? ['https://uet-mit-instruments-checklist.vercel.app', 
+       'https://uet-mit-instruments-checklist-frontend.vercel.app',
+       'https://frontend-git-main-shadracks-projects-a6bc7ac0.vercel.app'] 
+    : true, // Allow any origin in development
   credentials: true
 }));
 app.use(express.json());
@@ -27,22 +29,78 @@ mongoose.connect(MONGODB_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Root route for API health check
+app.get('/', (req, res) => {
+  res.json({ status: 'Server is running' });
+});
+
+// Test route to check if API is working
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!' });
+});
+
+// Debug routes information
+app.get('/api/debug', (req, res) => {
+  const routes = [];
+  
+  app._router.stack.forEach(middleware => {
+    if(middleware.route){
+      // Routes registered directly on the app
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    } else if(middleware.name === 'router'){
+      // Router middleware
+      middleware.handle.stack.forEach(handler => {
+        if(handler.route){
+          const path = handler.route.path;
+          routes.push({
+            path: '/api' + path,
+            methods: Object.keys(handler.route.methods)
+          });
+        }
+      });
+    }
+  });
+  
+  res.json({
+    routes,
+    apiRoutesLoaded: typeof apiRoutes === 'function',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // API Routes
 app.use('/api', apiRoutes);
 
-// For Vercel, export the Express app
+// Error handling middleware
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Endpoint not found' });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Server error', message: err.message });
+});
+
+// Start the server regardless of environment
+const server = app.listen(PORT, () => {
+  console.log(`Server is definitely running on http://localhost:${PORT}`);
+  console.log(`Try accessing http://localhost:${PORT}/api/test in your browser`);
+});
+
+// Handle server errors
+server.on('error', (error) => {
+  console.error('Server error:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Try a different port.`);
+  }
+});
+
+// Only export the app in production for Vercel
 if (process.env.NODE_ENV === 'production') {
-  // Handle SPA routing for frontend - if used in same deployment
-  app.get('*', (req, res) => {
-    res.status(404).send('API endpoint not found');
-  });
+  module.exports = app;
+} else {
+  // In development, we've already started the server
 }
-
-// Start the server if not in production (Vercel handles this in production)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
-}
-
-module.exports = app;

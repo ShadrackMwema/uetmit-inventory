@@ -4,6 +4,17 @@ const instrumentController = require('../controllers/instrumentController');
 const historyController = require('../controllers/historyController');
 const checklistController = require('../controllers/checklistController');
 
+// This is the root route for /api
+router.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the API' });
+});
+
+// Add more routes as needed
+router.get('/items', (req, res) => {
+  // This would be /api/items
+  res.json({ items: [] });
+});
+
 // Instrument routes
 router.get('/instruments', instrumentController.getAllInstruments);
 router.get('/instruments/:id', instrumentController.getInstrumentById);
