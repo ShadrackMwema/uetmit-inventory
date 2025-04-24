@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import config from '../config';
 
 const InstrumentList = () => {
     const [instruments, setInstruments] = useState([]);
@@ -14,7 +15,7 @@ const InstrumentList = () => {
     const fetchInstruments = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments');
+            const response = await axios.get(`${config.apiUrl}/instruments`);
             setInstruments(response.data);
             setLoading(false);
         } catch (error) {
@@ -27,7 +28,7 @@ const InstrumentList = () => {
     const deleteInstrument = async (id) => {
         if (window.confirm('Are you sure you want to delete this instrument?')) {
             try {
-                await axios.delete(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments/${id}`);
+                await axios.delete(`${config.apiUrl}/instruments/${id}`);
                 // Update the UI by removing the deleted instrument
                 setInstruments(instruments.filter(instrument => instrument._id !== id));
             } catch (error) {
