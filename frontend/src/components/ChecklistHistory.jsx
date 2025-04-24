@@ -15,7 +15,7 @@ const ChecklistHistory = () => {
     const fetchHistory = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/history');
+            const response = await axios.get('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/history');
             setHistory(response.data);
             setLoading(false);
         } catch (error) {

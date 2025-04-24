@@ -27,7 +27,7 @@ const InstrumentForm = () => {
     const fetchInstrument = async (instrumentId) => {
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:5000/api/instruments/${instrumentId}`);
+            const response = await axios.get(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments/${instrumentId}`);
             const instrument = response.data;
             
             // Format date for input field

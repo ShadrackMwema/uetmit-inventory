@@ -27,7 +27,7 @@ const InstrumentList = () => {
     const deleteInstrument = async (id) => {
         if (window.confirm('Are you sure you want to delete this instrument?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/instruments/${id}`);
+                await axios.delete(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments/${id}`);
                 // Update the UI by removing the deleted instrument
                 setInstruments(instruments.filter(instrument => instrument._id !== id));
             } catch (error) {
