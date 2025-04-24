@@ -27,7 +27,7 @@ const InstrumentForm = () => {
     const fetchInstrument = async (instrumentId) => {
         try {
             setLoading(true);
-            const response = await axios.get(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments/${instrumentId}`);
+            const response = await axios.get(`https://uetmit-inventory.vercel.app/api/instruments/${instrumentId}`);
             const instrument = response.data;
             
             // Format date for input field
@@ -69,13 +69,13 @@ const InstrumentForm = () => {
             setLoading(true);
             
             if (isEdit) {
-                await axios.put(`http://localhost:5000/api/instruments/${id}`, {
+                await axios.put(`https://uetmit-inventory.vercel.app/api/instruments/${id}`, {
                     ...formData,
                     notes: formData.notes || `Instrument updated on ${new Date().toLocaleDateString()}`
                 });
                 alert('Instrument updated successfully!');
             } else {
-                await axios.post('http://localhost:5000/api/instruments', formData);
+                await axios.post('https://uetmit-inventory.vercel.app/api/instruments', formData);
                 alert('Instrument added successfully!');
             }
             

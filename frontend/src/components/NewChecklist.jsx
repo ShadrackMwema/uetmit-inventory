@@ -20,7 +20,7 @@ const NewChecklist = () => {
     const fetchInstruments = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/instruments');
+            const response = await axios.get('https://uetmit-inventory.vercel.app/api/instruments');
             setInstruments(response.data);
             
             // Initialize checklist items from instruments
@@ -92,7 +92,7 @@ const NewChecklist = () => {
             };
             
             // First save the checklist
-            await axios.post('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/checklists', checklistData);
+            await axios.post('https://uetmit-inventory.vercel.app/api/checklists', checklistData);
             
             // Then create history entries for each changed item
             for (const item of checklistItems) {
@@ -110,7 +110,7 @@ const NewChecklist = () => {
                         action = item.inPossession ? 'Checked In' : 'Checked Out';
                     }
                     
-                    await axios.post('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/history', {
+                    await axios.post('https://uetmit-inventory.vercel.app/api/history', {
                         instrumentId: item.instrumentId,
                         instrumentName: item.name,
                         action,

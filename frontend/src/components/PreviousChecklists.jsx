@@ -15,7 +15,7 @@ const PreviousChecklists = () => {
     const fetchChecklists = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/checklists');
+            const response = await axios.get('https://uetmit-inventory.vercel.app/api/checklists');
             setChecklists(response.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +35,7 @@ const PreviousChecklists = () => {
 
     const handleViewChecklist = async (id) => {
         try {
-            const response = await axios.get(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/checklists/${id}`);
+            const response = await axios.get(`https://uetmit-inventory.vercel.app/api/checklists/${id}`);
             setSelectedChecklist(response.data);
         } catch (error) {
             console.error('Error fetching checklist details:', error);
@@ -46,7 +46,7 @@ const PreviousChecklists = () => {
     const handleDeleteChecklist = async (id) => {
         if (window.confirm('Are you sure you want to delete this checklist?')) {
             try {
-                await axios.delete(`https://backend-2e41jr3zw-shadracks-projects-a6bc7ac0.vercel.app/api/checklists/${id}`);
+                await axios.delete(`https://uetmit-inventory.vercel.app/api/checklists/${id}`);
                 setChecklists(checklists.filter(list => list._id !== id));
                 if (selectedChecklist && selectedChecklist._id === id) {
                     setSelectedChecklist(null);
