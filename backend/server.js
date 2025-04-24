@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const apiRoutes = require('./routes/api');
 const cors = require('cors');
 require('dotenv').config();
+const { createIndexes } = require('./config/db-indexes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,8 +47,14 @@ const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://shad:Qwerty.2025@
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 20000, // Increased timeout
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 45000
 })
-.then(() => console.log('MongoDB connected'))
+.then(() => {
+    console.log('MongoDB connected');
+    createIndexes().catch(err => console.error('Error creating indexes:', err));
+})
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Root route for API health check

@@ -4,9 +4,28 @@ const ChecklistHistory = require('../models/ChecklistHistory');
 // Get all instruments
 exports.getAllInstruments = async (req, res) => {
     try {
-        const instruments = await Instrument.find();
+        // Add pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 100;
+        const skip = (page - 1) * limit;
+        
+        // Add sort and timeout for better performance
+        const instruments = await Instrument.find({})
+            .sort({ name: 1 })
+            .limit(limit)
+            .skip(skip)
+            .lean()
+            .maxTimeMS(10000); // 10 second timeout
+        
         res.status(200).json(instruments);
     } catch (error) {
+        console.error('Error fetching instruments:', error);
+        if (error.name === 'MongooseError' || error.name === 'MongoTimeoutError') {
+            return res.status(408).json({ 
+                message: 'Database query timed out. Please try again or refine your search.',
+                error: 'QUERY_TIMEOUT'
+            });
+        }
         res.status(500).json({ message: error.message });
     }
 };
@@ -14,12 +33,16 @@ exports.getAllInstruments = async (req, res) => {
 // Get a single instrument by ID
 exports.getInstrumentById = async (req, res) => {
     try {
-        const instrument = await Instrument.findById(req.params.id);
+        const instrument = await Instrument.findById(req.params.id).maxTimeMS(5000);
         if (!instrument) {
             return res.status(404).json({ message: 'Instrument not found' });
         }
         res.status(200).json(instrument);
     } catch (error) {
+        console.error('Error fetching instrument by ID:', error);
+        if (error.kind === 'ObjectId') {
+            return res.status(400).json({ message: 'Invalid instrument ID format' });
+        }
         res.status(500).json({ message: error.message });
     }
 };
